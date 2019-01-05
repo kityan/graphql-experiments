@@ -1,0 +1,40 @@
+scalar OddInteger
+scalar DateTime
+
+type Event {
+  id: ID!
+  title: String!
+  price: Float
+  date: String!
+  creator: User!
+}
+
+input EventInput {
+  title: String!
+  description: String!
+  price: Float
+  date: DateTime!
+  creatorId: OddInteger! # just for experiment: we allow to create events only users whose ID is an as odd integer
+}
+
+type User {
+  id: ID!
+  name: String!
+  createdEvents: [Event]!
+}
+
+type RootQuery {
+  events: [Event]!
+  event(id: Int!):Event
+  user(id: Int!):User
+  users: [User]!
+}
+
+type RootMutation {
+  createEvent(eventInput: EventInput): Int
+}
+
+schema {
+  query: RootQuery
+  mutation: RootMutation
+}
