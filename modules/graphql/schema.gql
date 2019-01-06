@@ -23,18 +23,18 @@ type User {
   createdEvents: [Event]!
 }
 
-type RootQuery {
+type Query {
   events: [Event]!
   event(id: Int!):Event
   user(id: Int!):User
   users: [User]!
 }
 
-type RootMutation {
+type Mutation {
   createEvent(eventInput: EventInput): Int
 }
 
 schema {
-  query: RootQuery
-  mutation: RootMutation
+  query: Query
+  mutation: Mutation
 }

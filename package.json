@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@okgrow/graphql-scalars": "^0.4.2",
+    "apollo": "^1.7.0",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
     "graphql": "^14.0.2",
@@ -13,8 +14,10 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nodemon -e js,gql,json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon -e js,gql,graphql,json",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "schema:get": "apollo schema:download --endpoint http://localhost:3000/api ./tmp/schema.json",
+    "schema:ts": "apollo codegen:generate --schema ./tmp/schema.json --target typescript ./tmp/types.ts"
   },
   "author": "",
   "license": "ISC"

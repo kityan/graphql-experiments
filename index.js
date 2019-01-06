@@ -12,16 +12,15 @@ const
 
   app = express(),
 
-  // rootValue resolvers
-  rootValue = require('./modules/graphql/rootValue'),
+  // resolvers
+  resolvers = require('./modules/graphql/resolvers'),
 
   // schema
-  // [?] we can't use `graphql.buildSchema()` because we need to add custom scalar types with resolvers
   schema = makeExecutableSchema({
     typeDefs: require('fs').readFileSync('./modules/graphql/schema.gql').toString(),
-    resolvers: { OddInteger, DateTime }
+    resolvers: {...resolvers, OddInteger, DateTime }
   })
 
 app
-  .use('/api', expressGraphql({ schema, rootValue, graphiql: true }))
+  .use('/api', expressGraphql(req => ({context: {h: req.headers}, schema, graphiql: true })))
   .listen(3000)
