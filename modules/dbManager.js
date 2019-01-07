@@ -6,9 +6,9 @@ const dbData = {
     { id: 2, email: 'user2@etreniki.ru', name: 'User 2', },
   ],
   events: [
-    { id: 1, title: 'Event 1', date: '2019-01-05T11:27:21.681Z', creatorId: 1, price: 2.5, },
-    { id: 2, title: 'Event 2', date: '2019-02-06T11:27:21.681Z', creatorId: 2, },
-    { id: 3, title: 'Event 3', date: '2019-03-07T11:27:21.681Z', creatorId: 1, price: 3, },
+    { id: 1, title: 'Event 1', description: 'sample', date: '2019-01-05T11:27:21.681Z', creatorId: 1, price: 2.5, },
+    { id: 2, title: 'Event 2', description: 'sample', date: '2019-02-06T11:27:21.681Z', creatorId: 2, },
+    { id: 3, title: 'Event 3', description: 'sample', date: '2019-03-07T11:27:21.681Z', creatorId: 1, price: 3, },
   ]
 }
 
