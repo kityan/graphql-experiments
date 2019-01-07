@@ -2,7 +2,7 @@
 - `npm install` – installation
 - `npm start` - run with nodemon
 - `npm run schema:get` - download schema from endpoint to file into `./tmp` folder
-- `npm run schema:ts` - generate TS types from downloaded file
+- `npm run schema:ts` - generate TS types from downloaded file (delete `node_modules/apollo/node_modules/graphq` if fails)
 
 # Fake Database with sample data
 `./modules/dbManager.js`
