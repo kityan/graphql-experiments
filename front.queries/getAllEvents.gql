@@ -1,0 +1,13 @@
+query getAllEvents {
+  events {
+    id
+    title
+    description
+    date
+    price
+    creator {
+      id
+      name
+    }
+  }
+}

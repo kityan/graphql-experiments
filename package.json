@@ -17,7 +17,7 @@
     "start": "nodemon -e js,gql,graphql,json",
     "test": "echo \"Error: no test specified\" && exit 1",
     "schema:get": "apollo schema:download --endpoint http://localhost:3000/api ./tmp/schema.json",
-    "schema:ts": "apollo codegen:generate --schema ./tmp/schema.json --target typescript ./tmp/types.ts"
+    "schema:ts": "apollo codegen:generate --queries ./front.queries/**/*.*  --schema ./tmp/schema.json --target typescript --outputFlat ./tmp/types.ts"
   },
   "author": "",
   "license": "ISC"

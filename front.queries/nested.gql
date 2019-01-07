@@ -1,0 +1,22 @@
+query nested {
+  events {
+    id
+    creator {
+      createdEvents {
+        creator {
+          createdEvents {
+            creator {
+              createdEvents {
+                creator {
+                  createdEvents {
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
