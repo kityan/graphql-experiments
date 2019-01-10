@@ -20,7 +20,28 @@ This URL also hardcoded for `npm schema:get`
 
 ## Query
 ### Success
-- `query {
+
+~~~~
+{
+  calculateRoute(calculateRouteInput: {
+    app_id: "APP_ID", 
+    app_code: "APP_CODE", 
+    waypoint0: {lat: 50, lng: 50}, 
+    waypoint1: {lat: 100, lng: 100},
+    mode: {
+      fastest: true,
+      car: true,
+      traffic: DISABLED
+    }
+  }) {
+    lat
+    lng
+  }
+}
+~~~~
+
+~~~~
+query {
   events {
     date
     creator {
@@ -37,22 +58,47 @@ This URL also hardcoded for `npm schema:get`
       }
     }
   }
-}`
+}
+~~~~
+
+
 
 ## Mutations
 ### Fail
-- `
+~~~~
 mutation {
-  createEvent(eventInput:{title: "123", description: "123", price: 0, date: "2019-01-06T12:36:56.715Z", creatorId: 2})
+  createEvent(eventInput:{
+    title: "123", 
+    description: "123", 
+    price: 0, 
+    date: "2019-01-06T12:36:56.715Z", 
+    creatorId: 2
+  })
 }
-`
-- `
+~~~~
+
+~~~~
 mutation {
-  createEvent(eventInput:{title: "123", description: "123", price: 0, date: "2019-01-06T12:36:56.715Z", creatorId: 123})
+  createEvent(
+    eventInput:{
+      title: "123", 
+      description: "123", 
+      price: 0, 
+      date: "2019-01-06T12:36:56.715Z", 
+      creatorId: 123
+  })
 }
-`
+~~~~
 ### Success
-- `mutation {
-  createEvent(eventInput:{title: "123", description: "123", price: 0, date: "2019-01-06T12:36:56.715Z", creatorId: 1})
-}`
+~~~~ 
+mutation {
+  createEvent(eventInput:{
+    title: "123", 
+    description: "123", 
+    price: 0,
+    date: "2019-01-06T12:36:56.715Z", 
+    creatorId: 1
+  })
+}
+~~~~
 

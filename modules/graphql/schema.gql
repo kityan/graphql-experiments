@@ -18,6 +18,35 @@ input EventInput {
   creatorId: OddInteger! # just for experiment: we allow to create events only users whose ID is an as odd integer
 }
 
+type Point {
+  lat: Float!
+  lng: Float!
+}
+
+input PointInput {
+  lat: Float!
+  lng: Float!
+}
+
+enum CalculateRouteModeTraffic {
+  DISABLED
+  ENABLED
+}
+
+input CalculateRouteMode {
+  fastest: Boolean
+  car: Boolean
+  traffic: CalculateRouteModeTraffic
+}
+
+input CalculateRouteInput {
+  app_id: String!
+  app_code: String!
+  waypoint0: PointInput!
+  waypoint1: PointInput!
+  mode: CalculateRouteMode
+}
+
 type User {
   id: ID!
   name: String!
@@ -29,6 +58,7 @@ type Query {
   event(id: Int!):Event
   user(id: Int!):User
   users: [User]!
+  calculateRoute(calculateRouteInput: CalculateRouteInput): [Point]!
 }
 
 type Mutation {
