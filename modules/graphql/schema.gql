@@ -18,33 +18,74 @@ input EventInput {
   creatorId: OddInteger! # just for experiment: we allow to create events only users whose ID is an as odd integer
 }
 
+# Точка с географическим координатами
 type Point {
+  # широта, десятичные градусы
   lat: Float!
+  # долгота, десятичные градусы
   lng: Float!
 }
 
+# Точка с географическим координатами (input)
 input PointInput {
+  # широта, десятичные градусы
   lat: Float!
+  # долгота, десятичные градусы
   lng: Float!
 }
 
+
+# Варианты параметра Traffic режиме калькуляции маршрута
 enum CalculateRouteModeTraffic {
+  # не учитывать
   DISABLED
+  # учитывать
   ENABLED
 }
 
-input CalculateRouteMode {
-  fastest: Boolean
-  car: Boolean
-  traffic: CalculateRouteModeTraffic
+# Варианты параметра trafficMode режиме калькуляции маршрута
+enum CalculateRouteModeType {
+  # наикратчайший
+  FASTEST
+  # самый быстрый
+  SHORTEST
 }
 
+# Варианты параметра trafficMode режиме калькуляции маршрута
+enum CalculateRouteModeTransportModes {
+  # автомобиль
+  CAR
+  # пешеход
+  PEDESTRIAN
+  # велосипед
+  BICYCLE
+}
+
+enum SomeEnumForArray {
+  ONE
+  TWO
+  THREE
+}
+
+# Режим калькуляции маршурта (input)
+input CalculateRouteMode {
+  # оптимизация маршрута
+  type: CalculateRouteModeType = FASTEST
+  # для кого маршрут?
+  transportModes: CalculateRouteModeTransportModes = CAR
+  # учёт трафика
+  trafficMode: CalculateRouteModeTraffic = DISABLED
+  # enum в массиве
+  someEnum: [SomeEnumForArray] = null
+}
+
+# Параметры запроса на калькуляцию маршрута
 input CalculateRouteInput {
   app_id: String!
   app_code: String!
   waypoint0: PointInput!
   waypoint1: PointInput!
-  mode: CalculateRouteMode
+  mode: CalculateRouteMode = {}
 }
 
 type User {
@@ -58,6 +99,7 @@ type Query {
   event(id: Int!):Event
   user(id: Int!):User
   users: [User]!
+  # Запрос на калькуляцию маршурта. Сперва требуется получить реквизиты доступа. [подробнее](http://etreniki.ru)
   calculateRoute(calculateRouteInput: CalculateRouteInput): [Point]!
 }
 

@@ -29,9 +29,10 @@ This URL also hardcoded for `npm schema:get`
     waypoint0: {lat: 50, lng: 50}, 
     waypoint1: {lat: 100, lng: 100},
     mode: {
-      fastest: true,
-      car: true,
-      traffic: DISABLED
+      type: FASTEST
+      transportModes: CAR
+      trafficMode: ENABLED
+      someEnum: [ONE, TWO]
     }
   }) {
     lat
