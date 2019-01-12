@@ -12,15 +12,27 @@ const
 
   app = express(),
 
+  // DataLoader loaders generator
+  createDataLoaders = require('./modules/graphql/createDataLoaders'),
+
+  _dataLoadersRef = { // reference to update on each request
+    loaders: createDataLoaders()
+  },
+
   // resolvers
-  resolvers = require('./modules/graphql/resolvers'),
+  resolvers = require('./modules/graphql/resolvers')(_dataLoadersRef),
 
   // schema
   schema = makeExecutableSchema({
     typeDefs: require('fs').readFileSync('./modules/graphql/schema.gql').toString(),
-    resolvers: {...resolvers, OddInteger, DateTime }
+    resolvers: { ...resolvers, OddInteger, DateTime }
   })
 
 app
-  .use('/api', expressGraphql(req => ({context: {h: req.headers}, schema, graphiql: true })))
+  .use('/api', (res, req, next) => {
+    // recreate DataLoader loaders
+    _dataLoadersRef.loaders = createDataLoaders()
+    next()
+  })
+  .use('/api', expressGraphql(req => ({ context: { h: req.headers }, schema, graphiql: true })))
   .listen(3000)

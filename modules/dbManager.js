@@ -12,22 +12,90 @@ const dbData = {
   ]
 }
 
+// helper to convert result for DataLoader
+const _prepare = ids => {
+  const result = ids.map(id => [])
+  const indexOfId = {}
+  // map indexes to speed up
+  for (let i = 0; i < ids.length; i++) {
+    const id = ids[i]
+    if (!indexOfId[id]) { indexOfId[id] = [] }
+    indexOfId[id].push(i)
+  }
+  return { indexOfId, result }
+}
+
+const _toArray = val => {
+  if (!Array.isArray(val)) {
+    return [val]
+  }
+  return val
+}
+
+
+// fake DB manager
 const dbManager = {
-  getUsers: () => Promise.resolve(dbData.users),
-  getEvents: () => Promise.resolve(dbData.events),
-  getUserEvents: (id) => Promise.resolve(dbData.events.filter(event => event.creatorId === id)),
-  getUser: (id) => {
-    const user = dbData.users.find(user => user.id === id)
-    return user
-      ? Promise.resolve(user)
-      : Promise.reject(new Error(`No user for id = ${id}`))
+  getUsers: (args) => Promise.resolve(args.map(() => dbData.users)),
+  getEvents: (args) => Promise.resolve(args.map(() => dbData.events)),
+
+  getUserEvents: (ids) => {
+    ids = _toArray(ids)
+    const response = dbData.events.filter(item => ids.includes(item.creatorId))
+    const { result, indexOfId } = _prepare(ids)
+    // DataLoader can call with duplicated ids in array if DataLoader caching is disabled:
+    response.forEach(item => indexOfId[item.creatorId].forEach(index => result[index].push(item)))
+    return Promise.resolve(result)
   },
-  getEvent: (id) => {
-    const event = dbData.events.find(event => event.id === id)
-    return event
-      ? Promise.resolve(event)
-      : Promise.reject(new Error(`No event for id = ${id}`))
+
+
+  getUser: (ids) => {
+    ids = _toArray(ids)
+
+    const response = dbData.users.filter(item => ids.includes(item.id))
+
+    const { result, indexOfId } = _prepare(ids)
+
+    // DataLoader can call with duplicated ids in array if DataLoader caching is disabled:
+    response.forEach(item => indexOfId[item.id].forEach(index => result[index] = item))
+
+    // check notFound
+    const notFoundIds = result.reduce((arr, r, i) => {
+      if (r.length === 0) { arr.push(ids[i]) }
+      return arr
+    }, [])
+
+    if (notFoundIds.length) {
+      // warning! Such reject will fail the whole DataLoader's batch
+      return Promise.reject(new Error(`No user for id = ${notFoundIds.join(', ')}`))
+    }
+
+    return Promise.resolve(result)
   },
+
+  getEvent: (ids) => {
+    ids = _toArray(ids)
+
+    const response = dbData.events.filter(item => ids.includes(item.id))
+
+    const { result, indexOfId } = _prepare(ids)
+
+    // DataLoader can call with duplicated ids in array if DataLoader caching is disabled:
+    response.forEach(item => indexOfId[item.id].forEach(index => result[index] = item))
+
+    // check notFound
+    const notFoundIds = result.reduce((arr, r, i) => {
+      if (r.length === 0) { arr.push(ids[i]) }
+      return arr
+    }, [])
+
+    if (notFoundIds.length) {
+      // warning! Such reject will fail the whole DataLoader's batch
+      return Promise.reject(new Error(`No event for id = ${notFoundIds.join(', ')}`))
+    }
+
+    return Promise.resolve(result)
+  },
+
   createEvent: async (event) => {
     // just to check if user exists, will throw if not
     // we call dbManager method, so this function should be async
@@ -39,4 +107,14 @@ const dbManager = {
   }
 }
 
-module.exports = { dbManager, dbData }
+let wrapped = {}
+// wrap for logging
+Object.keys(dbManager).forEach(key => {
+  wrapped[key] = (...args) => {
+    console.log(`Call dbManager.${key}(${args.join(', ')})`)
+    return dbManager[key].apply(this, args)
+  }
+})
+
+
+module.exports = { dbManager: wrapped, dbData }
