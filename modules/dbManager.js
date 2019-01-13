@@ -58,18 +58,9 @@ const dbManager = {
     // DataLoader can call with duplicated ids in array if DataLoader caching is disabled:
     response.forEach(item => indexOfId[item.id].forEach(index => result[index] = item))
 
-    // check notFound
-    const notFoundIds = result.reduce((arr, r, i) => {
-      if (r.length === 0) { arr.push(ids[i]) }
-      return arr
-    }, [])
-
-    if (notFoundIds.length) {
-      // warning! Such reject will fail the whole DataLoader's batch
-      return Promise.reject(new Error(`No user for id = ${notFoundIds.join(', ')}`))
-    }
-
-    return Promise.resolve(result)
+    return Promise.resolve(
+      result.map((r, idx) => (r.length === 0) ? new Error(`No user for id = ${ids[idx]}`) : r)
+    )
   },
 
   getEvent: (ids) => {
@@ -82,28 +73,22 @@ const dbManager = {
     // DataLoader can call with duplicated ids in array if DataLoader caching is disabled:
     response.forEach(item => indexOfId[item.id].forEach(index => result[index] = item))
 
-    // check notFound
-    const notFoundIds = result.reduce((arr, r, i) => {
-      if (r.length === 0) { arr.push(ids[i]) }
-      return arr
-    }, [])
-
-    if (notFoundIds.length) {
-      // warning! Such reject will fail the whole DataLoader's batch
-      return Promise.reject(new Error(`No event for id = ${notFoundIds.join(', ')}`))
-    }
-
-    return Promise.resolve(result)
+    return Promise.resolve(
+      result.map((r, idx) => (r.length === 0) ? new Error(`No event for id = ${ids[idx]}}`) : r)
+    )
   },
 
-  createEvent: async (event) => {
+  createEvent: async (eventInput) => {
     // just to check if user exists, will throw if not
     // we call dbManager method, so this function should be async
-    await dbManager.getUser(event.creatorId)
+    const res = await dbManager.getUser(eventInput.creatorId)
+    if (res[0] instanceof Error) {
+      throw res[0]
+    }
     // ok, user exists
     const id = dbData.events.length // fake id
-    dbData.events.push({ ...event, id })
-    return id // will return resolved Promise
+    dbData.events.push({ ...eventInput, id })
+    return id // will return resolved Promise from async function
   }
 }
 
@@ -111,7 +96,7 @@ let wrapped = {}
 // wrap for logging
 Object.keys(dbManager).forEach(key => {
   wrapped[key] = (...args) => {
-    console.log(`Call dbManager.${key}(${args.join(', ')})`)
+    console.log(`Call dbManager.${key}(${JSON.stringify(...args)})`)
     return dbManager[key].apply(this, args)
   }
 })

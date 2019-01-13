@@ -17,19 +17,8 @@ http://localhost:3000/api
 This URL also hardcoded for `npm schema:get` 
 
 # Problems
-- N+1 problem. Solution: https://www.npmjs.com/package/dataloader
-  - If we throw an error for in one level, DataLoader will fail whole batch, e.g. (user with id = 21 not exists):
-    ~~~~
-    { 
-      u1: user(id: 2){
-        name
-      } 
-      u2: user(id: 21){
-        name
-      } 
-    }
-    ~~~~
-- Requesting unnecessary fields from DB. Possible solution: https://medium.freecodecamp.org/a-5-line-major-efficiency-hack-for-your-graphql-api-type-resolvers-b58438b62864
+- **N+1 problem.** Solution: https://www.npmjs.com/package/dataloader
+- **Requesting unnecessary fields from DB.** Possible solution: https://medium.freecodecamp.org/a-5-line-major-efficiency-hack-for-your-graphql-api-type-resolvers-b58438b62864
 
 # Example queries
 
