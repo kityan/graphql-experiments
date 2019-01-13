@@ -74,7 +74,7 @@ const dbManager = {
     response.forEach(item => indexOfId[item.id].forEach(index => result[index] = item))
 
     return Promise.resolve(
-      result.map((r, idx) => (r.length === 0) ? new Error(`No event for id = ${ids[idx]}}`) : r)
+      result.map((r, idx) => (r.length === 0) ? new Error(`No event for id = ${ids[idx]}`) : r)
     )
   },
 
