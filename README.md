@@ -10,6 +10,7 @@
 # GraphQL
 - schema: `./modules/graphql/schema.gql`
 - resolvers for schema: `./modules/graphql/resolvers.js`
+- dataLoaders: `./modules/graphql/createDataLoaders.js` (recreation on each request, context passing)
 - custom types: `./modules/graphql/customScalars.js`
 
 # Endpoint and GraphiQL

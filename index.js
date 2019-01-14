@@ -29,9 +29,10 @@ app
     next()
   })
   .use('/api', expressGraphql(req => {
-    // DataLoader doesn't allow to pass additional arguments, therefore
-    // `info` is a placeholder to pass graphql's info into wrapped db accessors via context
-    const context = { req, info: null }
+    // DataLoader doesn't allow to pass additional arguments, therefore:
+    // `context` passed to loaders (dbManager need data about authentication etc.)
+    // loaders themselves are passed with context to resolvers, to be brand new on each request
+    const context = { req }
     // per-request loaders
     context.loaders = createDataLoaders(context)
     return { context, schema, graphiql: true }

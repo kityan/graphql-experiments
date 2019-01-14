@@ -1,7 +1,7 @@
 const { dbManager } = require('../dbManager')
 const DataLoader = require('dataloader')
 
-module.exports = (context, cache = false, batch = true) => {
+module.exports = (context, cache = true, batch = true) => {
 
   const options = { cache, batch }
 
