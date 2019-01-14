@@ -1,17 +1,16 @@
 const { dbManager } = require('../dbManager')
 const DataLoader = require('dataloader')
 
-module.exports = (cache = true, batch = true) => {
+module.exports = (context, cache = false, batch = true) => {
 
-  const user = new DataLoader(dbManager.getUser, { cache, batch })
+  const options = { cache, batch }
 
-  const createdEvents = new DataLoader(dbManager.getUserEvents, { cache, batch })
+  const user = new DataLoader(arg => dbManager.getUser(arg, context), options)
+  const createdEvents = new DataLoader(arg => dbManager.getUserEvents(arg, context), options)
+  const event = new DataLoader(arg => dbManager.getEvent(arg, context), options)
+  const users = new DataLoader(arg => dbManager.getUsers(arg, context), options)
+  const events = new DataLoader(arg => dbManager.getEvents(arg, context), options)
 
-  const event = new DataLoader(dbManager.getEvent, { cache, batch })
-
-  const users = new DataLoader(dbManager.getUsers, { cache, batch })
-
-  const events = new DataLoader(dbManager.getEvents, { cache, batch })
 
   return {
     user,

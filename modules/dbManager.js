@@ -1,4 +1,5 @@
 // fake DB manager
+const getFieldNames = require('graphql-list-fields')
 
 const dbData = {
   users: [
@@ -35,9 +36,12 @@ const _toArray = val => {
 
 // fake DB manager
 const dbManager = {
-  getUsers: (args) => Promise.resolve(args.map(() => dbData.users)),
-  getEvents: (args) => Promise.resolve(args.map(() => dbData.events)),
-
+  getUsers: (args) => {
+    return Promise.resolve(args.map(() => dbData.users))
+  },
+  getEvents: (args, context) => {
+    return Promise.resolve(args.map(() => dbData.events))
+  },
   getUserEvents: (ids) => {
     ids = _toArray(ids)
     const response = dbData.events.filter(item => ids.includes(item.creatorId))

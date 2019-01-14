@@ -15,12 +15,8 @@ const
   // DataLoader loaders generator
   createDataLoaders = require('./modules/graphql/createDataLoaders'),
 
-  _dataLoadersRef = { // reference to update on each request
-    loaders: createDataLoaders()
-  },
-
   // resolvers
-  resolvers = require('./modules/graphql/resolvers')(_dataLoadersRef),
+  resolvers = require('./modules/graphql/resolvers'),
 
   // schema
   schema = makeExecutableSchema({
@@ -30,9 +26,14 @@ const
 
 app
   .use('/api', (res, req, next) => {
-    // recreate DataLoader loaders
-    _dataLoadersRef.loaders = createDataLoaders()
     next()
   })
-  .use('/api', expressGraphql(req => ({ context: { h: req.headers }, schema, graphiql: true })))
+  .use('/api', expressGraphql(req => {
+    // DataLoader doesn't allow to pass additional arguments, therefore
+    // `info` is a placeholder to pass graphql's info into wrapped db accessors via context
+    const context = { req, info: null }
+    // per-request loaders
+    context.loaders = createDataLoaders(context)
+    return { context, schema, graphiql: true }
+  }))
   .listen(3000)
